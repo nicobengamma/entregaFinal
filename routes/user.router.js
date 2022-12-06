@@ -24,9 +24,6 @@ client.connect(() => {
   routerUser.post("/inicio", (req, res) => {
     const input = req.body;
     login(input, res);
-    setTimeout(() => {
-      res.redirect("/api/products/admin");
-    }, 3000);
   });
 });
 module.exports = routerUser;

@@ -4,7 +4,7 @@ const Logins = require("../models/schema.logins");
 const bcrypt = require("bcrypt");
 const logger = require("../config/log4js");
 const mongoose = require("mongoose");
-const jwt = require("jsonwebtoken");
+const { generateToken } = require("./verifyToken");
 
 const registrar = (input, res) => {
   const { usuario, password } = input;
@@ -37,19 +37,12 @@ const login = (input, res) => {
           console.log(error);
         }
       });
-      return bcrypt.compare(password, r.password);
+      return bcrypt.compare(password, r.password, (err, res) => {
+        if (err) {
+          return res.sendStatus(404);
+        } else next();
+      });
     }
-  });
-  const token = jwt.sign(
-    {
-      name: usuario.name,
-      id: usuario._id,
-    },
-    process.env.TOKEN_SECRET
-  );
-  res.header("auth-token", token).json({
-    error: null,
-    data: { token },
   });
 };
 module.exports = { registrar, login };

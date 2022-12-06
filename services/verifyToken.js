@@ -1,18 +1,24 @@
 const jwt = require("jsonwebtoken");
 
 // middleware to validate token (rutas protegidas)
-const verifyToken = (req, res, next) => {
-  const lok = req.cookie;
-  console.log(lok);
-  const token = req.cookie("token");
-  if (!token) return res.status(401).json({ error: "Acceso denegado" });
-  try {
-    const verified = jwt.verify(token, process.env.TOKEN_SECRET);
-    req.user = verified;
-    next(); // continuamos
-  } catch (error) {
-    res.status(400).json({ error: "token no es válido" });
-  }
-};
+function auth(req, res, next) {
+  const authHeader = req.headers.token;
 
-module.exports = verifyToken;
+  if (!authHeader) return res.status(401).json("no auth");
+  jwt.verify(authHeader, process.env.TOKEN_SECRET, (err, decoded) => {
+    if (err) return res.status(403).json("error auth");
+
+    req.user = decoded.data;
+    next();
+  });
+}
+function generateToken(user) {
+  const data = {
+    username: user.username,
+    rol: user.rol,
+  };
+
+  return jwt.sign({ data }, PRIVATE_KEY, { expiresIn: "24h" });
+}
+
+module.exports = (auth, generateToken);

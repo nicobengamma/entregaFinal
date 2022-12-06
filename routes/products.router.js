@@ -5,7 +5,6 @@ const logger = require("../services/logger");
 const { guardar, actualizar, eliminar } = require("../services/productService");
 const { client } = require("../services/server");
 const { collection } = require("../models/collections.bd");
-const verifyToken = require("../services/verifyToken");
 const cookieParser = require("cookie-parser");
 
 client.connect((err) => {
@@ -21,15 +20,6 @@ client.connect((err) => {
     });
   });
   routerProducts.get("/admin", (req, res, next) => {
-    const token = req.header("auth-token");
-    if (!token) return res.status(401).json({ error: "Acceso denegado" });
-    try {
-      const verified = jwt.verify(token, process.env.TOKEN_SECRET);
-      req.usuario = verified;
-      next(); // continuamos
-    } catch (error) {
-      res.status(400).json({ error: "token no es válido" });
-    }
     collection.find({}).toArray((err, data) => {
       if (err) {
         logger.error(err);
