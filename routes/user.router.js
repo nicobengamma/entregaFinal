@@ -7,7 +7,6 @@ const verifyToken = require("../services/verifyToken");
 
 client.connect(() => {
   const collection = client.db("myFirstDatabase").collection("users");
-  const usuarios = client.db("myFirstDatabase").collection("logins");
   routerUser.get("/", (req, res) => {
     res.render("welcome.ejs");
   });

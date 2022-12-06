@@ -14,11 +14,10 @@ function auth(req, res, next) {
 }
 function generateToken(user) {
   const data = {
-    username: user.username,
-    rol: user.rol,
+    username: user,
+    rol: user,
   };
-
-  return jwt.sign({ data }, PRIVATE_KEY, { expiresIn: "24h" });
+  return jwt.sign({ data }, process.env.TOKEN_SECRET, { expiresIn: "24h" });
 }
 
-module.exports = (auth, generateToken);
+module.exports = { auth, generateToken };

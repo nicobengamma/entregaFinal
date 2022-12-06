@@ -37,11 +37,10 @@ const login = (input, res) => {
           console.log(error);
         }
       });
-      return bcrypt.compare(password, r.password, (err, res) => {
-        if (err) {
-          return res.sendStatus(404);
-        } else next();
-      });
+      bcrypt.compare(password, r.password);
+      const user = usuario;
+      const token = generateToken(user);
+      res.header(token).redirect("/api/products");
     }
   });
 };

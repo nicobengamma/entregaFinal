@@ -18,14 +18,14 @@
       <h1>Bienvenido a Tienda World</h1>
     </div>
     <div class="row row-cols-1 row-cols-md-4 g-4 p-5 justify-content-center">
-      <form action="/api/sesion/inicio" method="post" class="needs-validation">
+      <form action="/api/session/inicio" method="post" class="needs-validation">
         <div class="mb-3">
-          <label for="exampleInputEmail1" class="form-label">@EMAIL</label>
+          <label for="exampleInputEmail1" class="form-label">User</label>
           <input
-            type="email"
+            type="text"
             class="form-control"
-            id="exampleInputEmail1"
-            aria-describedby="emailHelp"
+            name="usuario"
+            placeholder="usuario"
           />
           <div id="emailHelp" class="form-text">
             We'll never share your email with anyone else.
@@ -36,7 +36,8 @@
           <input
             type="password"
             class="form-control"
-            id="exampleInputPassword1"
+            name="password"
+            placeholder="password"
           />
         </div>
         <div class="mb-3 form-check">
