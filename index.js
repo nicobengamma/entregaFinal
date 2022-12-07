@@ -4,11 +4,16 @@ const routerCarrito = require("./routes/carrito.router");
 const routerProducts = require("./routes/products.router");
 const routerUser = require("./routes/user.router");
 const routerInfo = require("./routes/info.router");
-const routerChat = require("./routes/chat.router");
+// const routerChat = require("./routes/chat.router");
 const { auth } = require("./services/verifyToken");
-require("dotenv").config({ path: "config.env" });
-
+const options = require("./options/db_sqlite");
+const knex = require("knex")(options);
+const http = require("http");
+const { Server } = require("socket.io");
 const app = express();
+const server = http.createServer(app);
+const io = new Server(server);
+require("dotenv").config({ path: "config.env" });
 
 app.use(cookieParser());
 app.use(express.json());
@@ -21,13 +26,52 @@ app.use("/api/session", routerUser);
 app.use("/api/carrito", routerCarrito);
 app.use("/api/products", routerProducts);
 app.use("/info", routerInfo);
-app.use("/api/chat", routerChat);
+// app.use("/api/chat", routerChat);
 app.get("/", (req, res) => {
   res.send("ok");
 });
 
 // PORT //
-
-app.listen(process.env.PORT, () => {
-  console.log(`app listen on ${process.env.PORT}`);
+app.get("/api/chat", (req, res) => {
+  res.render("chats.ejs");
 });
+
+app.get("/data", (req, res) => {
+  knex
+    .from("chats")
+    .select("*")
+    .then((rows) => {
+      res.json(rows);
+    });
+});
+// routerChat.get("/socket.io/socket.io.js", (req, res) => {
+//   res.sendFile(__dirname + "/node_modules/socket.io/client-dist/socket.io.js");
+// });
+
+io.on("connection", (socket) => {
+  socket.on("chat-in", (data) => {
+    const time = new Date().toLocaleTimeString();
+    const dataOut = {
+      msj: data.msj,
+      userName: data.userName,
+      time,
+    };
+    knex("chats")
+      .insert(dataOut)
+      .then(() => console.log("se enviaron los chats"))
+      .catch((e) => console.log(e));
+    io.sockets.emit("chat-out", dataOut);
+  });
+  socket.on("tiping", (userName) => {
+    // const tiping = { tiping: userName };
+    // fs.writeFileSync("tipingNow/tipingNow.json", JSON.stringify(tiping));
+    socket.broadcast.emit("tiping", userName);
+  });
+});
+
+server.listen(8080, () => {
+  console.log("Running...");
+});
+// app.listen(process.env.PORT, () => {
+//   console.log(`app listen on ${process.env.PORT}`);
+// });

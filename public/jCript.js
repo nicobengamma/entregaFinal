@@ -5,8 +5,9 @@ if (userName == null) {
 }
 
 document.getElementById("userName").innerHTML = `${userName}`;
-const socket = io();
+
 loadFirstData();
+const socket = io();
 
 const btnSend = document.getElementById("send");
 
