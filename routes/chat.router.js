@@ -8,7 +8,6 @@ const { Server } = require("socket.io");
 
 routerChat.use(express.json());
 routerChat.use(express.urlencoded({ extended: "true" }));
-routerChat.use("/public", express.static(__dirname + "../public"));
 
 const server = http.createServer(routerChat);
 const io = new Server(server);
