@@ -1,30 +1,23 @@
 const express = require("express");
 const { Router } = express;
 const routerChat = Router();
-const options = require("./options/db_sqlite");
+const options = require("../options/db_sqlite");
 const knex = require("knex")(options);
-const express = require("express");
 const http = require("http");
 const { Server } = require("socket.io");
 
-const app = express();
+routerChat.use(express.json());
+routerChat.use(express.urlencoded({ extended: "true" }));
+routerChat.use("/public", express.static(__dirname + "../public"));
 
-app.set("views", "./views");
-app.set("view engine", "ejs");
-app.use(express.json());
-app.use(express.urlencoded({ extended: "true" }));
-// app.use("/normalizar", routerNorm);
-
-const server = http.createServer(app);
+const server = http.createServer(routerChat);
 const io = new Server(server);
 
-app.use("/public", express.static(__dirname + "/public"));
-
-app.get("/", (req, res) => {
-  res.render("index");
+routerChat.get("/", (req, res) => {
+  res.render("chats.ejs");
 });
 
-app.get("/data", (req, res) => {
+routerChat.get("/data", (req, res) => {
   knex
     .from("chats")
     .select("*")
@@ -54,6 +47,8 @@ io.on("connection", (socket) => {
   });
 });
 
-server.listen(8080, () => {
+server.listen(3000, () => {
   console.log("Running...");
 });
+
+module.exports = routerChat;
