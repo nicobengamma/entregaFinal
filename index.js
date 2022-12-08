@@ -4,7 +4,6 @@ const routerCarrito = require("./routes/carrito.router");
 const routerProducts = require("./routes/products.router");
 const routerUser = require("./routes/user.router");
 const routerInfo = require("./routes/info.router");
-// const routerChat = require("./routes/chat.router");
 const { auth } = require("./services/verifyToken");
 const options = require("./options/db_sqlite");
 const knex = require("knex")(options);
@@ -44,9 +43,6 @@ app.get("/data", (req, res) => {
       res.json(rows);
     });
 });
-// routerChat.get("/socket.io/socket.io.js", (req, res) => {
-//   res.sendFile(__dirname + "/node_modules/socket.io/client-dist/socket.io.js");
-// });
 
 io.on("connection", (socket) => {
   socket.on("chat-in", (data) => {
@@ -63,8 +59,6 @@ io.on("connection", (socket) => {
     io.sockets.emit("chat-out", dataOut);
   });
   socket.on("tiping", (userName) => {
-    // const tiping = { tiping: userName };
-    // fs.writeFileSync("tipingNow/tipingNow.json", JSON.stringify(tiping));
     socket.broadcast.emit("tiping", userName);
   });
 });
@@ -72,6 +66,3 @@ io.on("connection", (socket) => {
 server.listen(8080, () => {
   console.log("Running...");
 });
-// app.listen(process.env.PORT, () => {
-//   console.log(`app listen on ${process.env.PORT}`);
-// });
